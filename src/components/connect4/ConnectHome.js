@@ -47,8 +47,6 @@ class ConnectHome extends React.Component{
             }
         }
 
-        
-
         return false;
     }
 
