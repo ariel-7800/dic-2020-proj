@@ -1,5 +1,6 @@
 import React from "react"
 import Square from "./Square"
+import Board from "./Board"
 
 class BattleshipHome extends React.Component{
 
@@ -7,71 +8,149 @@ class BattleshipHome extends React.Component{
         super(props);
         this.state = {
             gameStarted: false,
-            pOneArray: Array(25).fill(null),
-            pTwoArray: Array(25).fill(null),
-            pOneIsNext: true,
-            pOneShips: 0,
-            pTwoShips: 0
-            
+            p1LocationArray: Array(25).fill(null),
+            p2LocationArray: Array(25).fill(null),
+            p1IsNext: true,
+            p1Ships: 0,
+            p2Ships: 0,
+            p1AttackArray: Array(25).fill(null),
+            p2AttackArray: Array(25).fill(null),
+            p1Hit: 0,
+            p2Hit: 0
         };
     }
 
     startGame = (event) => {
         event.preventDefault();
+        if (this.state.p1Ships != 5 || this.state.p2Ships != 5) {
+            return;
+        }
         this.setState({
             gameStarted: true
         });
     }
-
-    handleP1Click = (i) => {
-        const pOneArray = this.state.pOneArray.slice();
-
-        if (this.state.pOneShips >= 5 || pOneArray[i]) {
-            return;
-        }
-        
-        pOneArray[i] = "X";
-        this.setState({
-            pOneArray: pOneArray,
-            pOneShips: this.state.pOneShips + 1
-        })
-    }
-
-    handleP2Click = (i) => {
-        const pTwoArray = this.state.pTwoArray.slice();
-
-        if (this.state.pTwoShips >= 5 || pTwoArray[i]) {
-            return;
-        }
-        
-        pTwoArray[i] = "X";
-        this.setState({
-            pTwoArray: pTwoArray,
-            pTwoShips: this.state.pTwoShips + 1
-        })
-    }
-
-    renderP1Squares = (i) => {
+    
+    renderP1SquaresInitial = (i) => {
         return (
             <Square 
-                value = { this.state.pOneArray[i] } 
-                onClick = {() => this.handleP1Click(i)}
+                value = { this.state.p1LocationArray[i] } 
+                onClick = {() => this.handleP1ClickInitial(i)}
             />
         );
     }
 
-    renderP2Squares = (i) => {
+    renderP2SquaresInitial = (i) => {
         return (
             <Square 
-                value = { this.state.pTwoArray[i] } 
-                onClick = {() => this.handleP2Click(i)}
+                value = { this.state.p2LocationArray[i] } 
+                onClick = {() => this.handleP2ClickInitial(i)}
             />
         );
     }
+
+    handleP1ClickInitial = (i) => {
+        const p1LocationArray = this.state.p1LocationArray.slice();
+
+        if (this.state.p1Ships >= 5 || p1LocationArray[i]) {
+            return;
+        }
+        
+        p1LocationArray[i] = "X";
+        this.setState({
+            p1LocationArray: p1LocationArray,
+            p1Ships: this.state.p1Ships + 1
+        })
+    }
+    
+    handleP2ClickInitial = (i) => {
+        const p2LocationArray = this.state.p2LocationArray.slice();
+
+        if (this.state.p2Ships >= 5 || p2LocationArray[i]) {
+            return;
+        }
+        
+        p2LocationArray[i] = "X";
+        this.setState({
+            p2LocationArray: p2LocationArray,
+            p2Ships: this.state.p2Ships + 1
+        })
+    }
+
+    renderP1SquaresInGame = (i) => {
+        return (
+            <Square 
+                value = { this.state.p1AttackArray[i] } 
+                onClick = {() => this.handleP1ClickInGame(i)}
+            />
+        );
+    }
+
+    renderP2SquaresInGame = (i) => {
+        return (
+            <Square 
+                value = { this.state.p2AttackArray[i] } 
+                onClick = {() => this.handleP2ClickInGame(i)}
+            />
+        );
+    }
+
+    handleP1ClickInGame = (i) => {
+
+        const p1AttackArray = this.state.p1AttackArray.slice();
+
+        if (!this.state.p1IsNext || p1AttackArray[i] || this.determineWinner()) {
+            return;
+        }
+
+        const hitSquare = this.state.p2LocationArray[i];
+        p1AttackArray[i] = hitSquare === null ? "O" : "X";
+        const hitCount = hitSquare === null ? 0 : 1;
+        this.setState({
+            p1AttackArray: p1AttackArray,
+            p1IsNext: !this.state.p1IsNext,
+            p1Hit: this.state.p1Hit + hitCount
+        })
+    }
+
+    handleP2ClickInGame = (i) => {
+
+        const p2AttackArray = this.state.p2AttackArray.slice();
+
+        if (this.state.p1IsNext || p2AttackArray[i] || this.determineWinner()) {
+            return;
+        }
+
+        const hitSquare = this.state.p1LocationArray[i];
+        p2AttackArray[i] = hitSquare === null ? "O" : "X";
+        const hitCount = hitSquare === null ? 0 : 1;
+        this.setState({
+            p2AttackArray: p2AttackArray,
+            p1IsNext: !this.state.p1IsNext,
+            p2Hit: this.state.p2Hit + hitCount
+        })
+    }
+
+    determineWinner = () => {
+        if (this.state.p1Hit == 5) {
+            return "1";
+        } else if (this.state.p2Hit == 5) {
+            return "2";
+        } else {
+            return null;
+        }
+    }
+    
 
     render () {
 
-        const status = "Next Player: " + ( this.state.pOneIsNext ? "Player 1" : "Player 2" );
+        const winner = this.determineWinner();
+        let status;
+
+        if (winner) {
+            status = "Player " + (winner) + " Wins!!";
+        } else {
+            status =  "Next Player: " + ( this.state.p1IsNext ? "Player 1" : "Player 2" );
+        }
 
         return (
             <div>
@@ -80,91 +159,31 @@ class BattleshipHome extends React.Component{
                         <div>
                             <h3>{ status }</h3>
                             <h3>Player 1</h3>
-                            <div className="board-row">
-                                { this.renderP1Squares(0) }
-                                { this.renderP1Squares(1) }
-                                { this.renderP1Squares(2) }
-                                { this.renderP1Squares(3) }
-                                { this.renderP1Squares(4) }
+                            <div>
+                                <Board value={ this.renderP1SquaresInGame } />
                             </div>
-
-                            <div className="board-row">
-                                { this.renderP1Squares(6) }
-                                { this.renderP1Squares(7) }
-                                { this.renderP1Squares(8) }
-                                { this.renderP1Squares(9) }
-                                { this.renderP1Squares(10) }
-                            </div>
-
-                            <div className="board-row">
-                                { this.renderP1Squares(11) }
-                                { this.renderP1Squares(12) }
-                                { this.renderP1Squares(13) }
-                                { this.renderP1Squares(14) }
-                                { this.renderP1Squares(15) }
-                            </div>
-
-                            <div className="board-row">
-                                { this.renderP1Squares(16) }
-                                { this.renderP1Squares(17) }
-                                { this.renderP1Squares(18) }
-                                { this.renderP1Squares(19) }
-                                { this.renderP1Squares(20) }
-                            </div>
-
-                            <div className="board-row">
-                                { this.renderP1Squares(21) }
-                                { this.renderP1Squares(22) }
-                                { this.renderP1Squares(23) }
-                                { this.renderP1Squares(24) }
-                                { this.renderP1Squares(25) }
-                            </div>
-                            
 
                             <h3>Player 2</h3>
-                            <div className="board-row">
-                                { this.renderP2Squares(0) }
-                                { this.renderP2Squares(1) }
-                                { this.renderP2Squares(2) }
-                                { this.renderP2Squares(3) }
-                                { this.renderP2Squares(4) }
-                            </div>
-
-                            <div className="board-row">
-                                { this.renderP2Squares(6) }
-                                { this.renderP2Squares(7) }
-                                { this.renderP2Squares(8) }
-                                { this.renderP2Squares(9) }
-                                { this.renderP2Squares(10) }
-                            </div>
-
-                            <div className="board-row">
-                                { this.renderP2Squares(11) }
-                                { this.renderP2Squares(12) }
-                                { this.renderP2Squares(13) }
-                                { this.renderP2Squares(14) }
-                                { this.renderP2Squares(15) }
-                            </div>
-
-                            <div className="board-row">
-                                { this.renderP2Squares(16) }
-                                { this.renderP2Squares(17) }
-                                { this.renderP2Squares(18) }
-                                { this.renderP2Squares(19) }
-                                { this.renderP2Squares(20) }
-                            </div>
-
-                            <div className="board-row">
-                                { this.renderP2Squares(21) }
-                                { this.renderP2Squares(22) }
-                                { this.renderP2Squares(23) }
-                                { this.renderP2Squares(24) }
-                                { this.renderP2Squares(25) }
+                            <div>
+                                <Board value={ this.renderP2SquaresInGame } />
                             </div>
                         </div>
                     :
                         <div>
                             <header><h1>Welcome to Battleship!</h1></header>
+                            
+                            <h3>Player 1</h3>
+                            <p>Please select ship locations</p>
+                            <div>
+                                <Board value={ this.renderP1SquaresInitial } />
+                            </div>
+
+                            <h3>Player 2</h3>
+                            <p>Please select ship locations, then click Start Game</p>
+                            <div>
+                                <Board value={ this.renderP2SquaresInitial } />
+                            </div>
+                            
                             <input type="submit" className="startGame" onClick={ this.startGame } value="Start Game"></input>
                         </div>
                 }
