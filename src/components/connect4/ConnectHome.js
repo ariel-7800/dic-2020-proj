@@ -9,7 +9,9 @@ class ConnectHome extends React.Component{
         this.state = {
             squareArray: [Array(7).fill("square"),Array(7).fill("square"),Array(7).fill("square"),Array(7).fill("square"),Array(7).fill("square"),Array(7).fill("square")],
             currentPlayer: "blue",
-            label: "Game in Progress"
+            gameWinner: false,
+            gamesWonRed: 0,
+            gamesWonBlue: 0,
         }
     }
 
@@ -20,21 +22,24 @@ class ConnectHome extends React.Component{
                 if (squareArray[i + i2][j] === squareArray[i2 + i + 1][j]
                     && squareArray[i + i2][j] === squareArray[i2 + i + 2][j] 
                     && squareArray[i + i2][j] === squareArray[i2 + i + 3][j]) {
-                        return true;
+                        this.setState({gameWinner: squareArray[i][j] === "blueSquare" ? "blue" : "red"});
+                        return;
                     }
             }
             if (i2 + j > -1 && i2 + j + 3 < 7) {
                 if (squareArray[i][j + i2] === squareArray[i][j + i2 + 1]
                     && squareArray[i][j + i2] === squareArray[i][j + i2 + 2] 
                     && squareArray[i][j + i2] === squareArray[i][j + i2 + 3]) {
-                        return true;
+                        this.setState({gameWinner: squareArray[i][j] === "blueSquare" ? "blue" : "red"});
+                        return;
                     }
             }
             if (i2 + j > -1 && i2 + j + 3 < 7 && i2 + i > -1 && i2 + i + 3 < 6) {
                 if (squareArray[i + i2][j + i2] === squareArray[i + i2 + 1][j + i2 + 1]
                     && squareArray[i + i2][j + i2] === squareArray[i + i2 + 2][j + i2 + 2] 
                     && squareArray[i + i2][j + i2] === squareArray[i + i2 + 3][j + i2 + 3]) {
-                        return true;
+                        this.setState({gameWinner: squareArray[i][j] === "blueSquare" ? "blue" : "red"});
+                        return;
                     }
             }
             if (i2 + j > -1 && i2 + j + 3 < 7 && - i2 + i - 3 > -1 && - i2 + i < 6) {
@@ -42,7 +47,8 @@ class ConnectHome extends React.Component{
                     && squareArray[i][j] === squareArray[i - i2 - 1][j + i2 + 1] 
                     && squareArray[i][j] === squareArray[i - i2 - 2][j + i2 + 2]
                     && squareArray[i][j] === squareArray[i - i2 - 3][j + i2 + 3]) {
-                        return true;
+                        this.setState({gameWinner: squareArray[i][j] === "blueSquare" ? "blue" : "red"});
+                        return;
                     }
             }
         }
@@ -51,6 +57,10 @@ class ConnectHome extends React.Component{
     }
 
     handleClick = (i) => {
+        if (this.state.gameWinner) {
+            return
+        }
+
         const squareArray = this.state.squareArray.slice();
         if (squareArray[0][i] !== "square") {
             return;
@@ -70,17 +80,13 @@ class ConnectHome extends React.Component{
             if (squareArray[j][i] !== "square") {
                 z = false
                 squareArray[j-1][i] = color;
-                if (this.checkWinner(j-1,i)) {
-                    this.setState({label: "we have a winner"})
-                }
+                this.checkWinner(j-1,i);
                 break;
             }
         } 
         if (z) {
             squareArray[5][i] = color;
-            if (this.checkWinner(5,i)) {
-                this.setState({label: "we have a winner"})
-            }
+            this.checkWinner(5,i)
         }
 
         this.setState({
@@ -106,14 +112,27 @@ class ConnectHome extends React.Component{
 
         return (
             <div>
-                <h1>Welcome to Connect4</h1>
+                <h1 className = "main-header">Welcome to Connect4</h1>
+                {
+                    this.state.gameWinner === false ? 
+                    <h2 className= "turn-header">It is {this.state.currentPlayer}'s turn</h2>
+                    :
+                    <h2 className= "winner-header">Congratulations {this.state.gameWinner}!</h2>
+                }
+                <div className="main-board">
                 {this.renderSquares(0)}
                 {this.renderSquares(1)}
                 {this.renderSquares(2)}
                 {this.renderSquares(3)}
                 {this.renderSquares(4)}
                 {this.renderSquares(5)}
-                <h1>{this.state.label}</h1>
+                </div>
+                <div className="lower-bar">
+                    <input type="submit" value="Go to Menu" onClick={() => {}}></input>
+                    <p>Games won by red: {this.state.gamesWonBlue}</p>
+                    <p>Games won by blue: {this.state.gamesWonRed}</p>
+                    <input type="submit" value="Start Again" onClick={() => {}}></input>
+                </div>
             </div>
         )
     }

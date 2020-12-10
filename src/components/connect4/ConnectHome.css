@@ -19,8 +19,46 @@
       background: red;
 }
 
-  .board-row:after {
+  .board-row {
     clear: both;
     content: "";
     display: table;
+    margin-left: 10%;
+  }
+
+  .main-game {
+    background-color: lightgray;
+  }
+
+  .main-header {
+    text-align: center;
+    color: black;
+
+  }
+
+  .turn-header {
+    text-align: center;
+    font-size: 20px;
+    margin-bottom: 25px;
+  }
+
+  .winner-header {
+    text-align: center;
+    color: #999900;
+    font-weight: 900;
+  }
+  
+  .main-board {
+    margin: auto;
+    width: 700px;
+  }
+
+  .lower-bar {
+    margin: auto;
+    width: 600px;
+  }
+
+  .lower-bar p, .lower-bar input{
+    display: inline-block;
+    margin: 10px;
   }
