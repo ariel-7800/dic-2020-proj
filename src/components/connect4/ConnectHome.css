@@ -1,43 +1,23 @@
-.square {
+.square, .blueSquare, .redSquare{
     background: #fff;
     border: 1px solid #999;
     float: left;
     font-size: 24px;
     font-weight: bold;
     line-height: 34px;
-    height: 100px;
+    height: 80px;
     padding: 0;
     text-align: center;
-    width: 100px; 
-    border-radius: 100px }
+    width: 80px; 
+    border-radius: 80px }
 
   .blueSquare {
     background: blue;
-    border: 1px solid #999;
-    float: left;
-    font-size: 24px;
-    font-weight: bold;
-    line-height: 34px;
-    height: 100px;
-
-    padding: 0;
-    text-align: center;
-    width: 100px; 
-    border-radius: 100px }
+  }
 
     .redSquare {
       background: red;
-      border: 1px solid #999;
-      float: left;
-      font-size: 24px;
-      font-weight: bold;
-      line-height: 34px;
-      height: 100px;
-  
-      padding: 0;
-      text-align: center;
-      width: 100px; 
-      border-radius: 100px }
+}
 
   .board-row:after {
     clear: both;
