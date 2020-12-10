@@ -8,8 +8,48 @@ class ConnectHome extends React.Component{
         super(props);
         this.state = {
             squareArray: [Array(7).fill("square"),Array(7).fill("square"),Array(7).fill("square"),Array(7).fill("square"),Array(7).fill("square"),Array(7).fill("square")],
-            currentPlayer: "blue"
+            currentPlayer: "blue",
+            label: "Game in Progress"
         }
+    }
+
+    checkWinner = (i, j) => {
+        const squareArray = this.state.squareArray;
+        for (let i2 = -3; i2 < 1; i2++) {
+            if (i2 + i > -1 && i2 + i + 3 < 6) {
+                if (squareArray[i + i2][j] === squareArray[i2 + i + 1][j]
+                    && squareArray[i + i2][j] === squareArray[i2 + i + 2][j] 
+                    && squareArray[i + i2][j] === squareArray[i2 + i + 3][j]) {
+                        return true;
+                    }
+            }
+            if (i2 + j > -1 && i2 + j + 3 < 7) {
+                if (squareArray[i][j + i2] === squareArray[i][j + i2 + 1]
+                    && squareArray[i][j + i2] === squareArray[i][j + i2 + 2] 
+                    && squareArray[i][j + i2] === squareArray[i][j + i2 + 3]) {
+                        return true;
+                    }
+            }
+            if (i2 + j > -1 && i2 + j + 3 < 7 && i2 + i > -1 && i2 + i + 3 < 6) {
+                if (squareArray[i + i2][j + i2] === squareArray[i + i2 + 1][j + i2 + 1]
+                    && squareArray[i + i2][j + i2] === squareArray[i + i2 + 2][j + i2 + 2] 
+                    && squareArray[i + i2][j + i2] === squareArray[i + i2 + 3][j + i2 + 3]) {
+                        return true;
+                    }
+            }
+            if (i2 + j > -1 && i2 + j + 3 < 7 && - i2 + i - 3 > -1 && - i2 + i < 6) {
+                if (squareArray[i][j] === squareArray[i - i2][j + i2]
+                    && squareArray[i][j] === squareArray[i - i2 - 1][j + i2 + 1] 
+                    && squareArray[i][j] === squareArray[i - i2 - 2][j + i2 + 2]
+                    && squareArray[i][j] === squareArray[i - i2 - 3][j + i2 + 3]) {
+                        return true;
+                    }
+            }
+        }
+
+        
+
+        return false;
     }
 
     handleClick = (i) => {
@@ -32,11 +72,17 @@ class ConnectHome extends React.Component{
             if (squareArray[j][i] !== "square") {
                 z = false
                 squareArray[j-1][i] = color;
+                if (this.checkWinner(j-1,i)) {
+                    this.setState({label: "we have a winner"})
+                }
                 break;
             }
         } 
         if (z) {
             squareArray[5][i] = color;
+            if (this.checkWinner(5,i)) {
+                this.setState({label: "we have a winner"})
+            }
         }
 
         this.setState({
@@ -69,6 +115,7 @@ class ConnectHome extends React.Component{
                 {this.renderSquares(3)}
                 {this.renderSquares(4)}
                 {this.renderSquares(5)}
+                <h1>{this.state.label}</h1>
             </div>
         )
     }
