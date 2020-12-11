@@ -5,7 +5,7 @@ class Square extends React.Component{
 
     render () {
         return (
-                <input type="submit" className={this.props.className} onClick={this.props.onClick} value=" "></input>
+                <div className={this.props.className} onClick={this.props.onClick}/>
         )
     }
 }

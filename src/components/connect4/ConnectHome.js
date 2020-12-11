@@ -8,6 +8,7 @@ class ConnectHome extends React.Component{
         super(props);
         this.state = {
             squareArray: [Array(7).fill("square"),Array(7).fill("square"),Array(7).fill("square"),Array(7).fill("square"),Array(7).fill("square"),Array(7).fill("square")],
+            topSquareArray: Array(7).fill("square-top-basic"),
             currentPlayer: "blue",
             gameWinner: false,
             gamesWonRed: 0,
@@ -115,6 +116,36 @@ class ConnectHome extends React.Component{
 
     }
 
+    handleLeave = () => {
+        this.setState({
+            topSquareArray: Array(7).fill("square-top-basic")
+                })
+    }
+
+    renderTopSquares = (i) => {
+        return(
+            <Square className={this.state.topSquareArray[i]} onMouseEnter={() => this.handleEnter(i)} onMouseLeave={() => this.handleLeave()} onClick={() => this.handleClick(i)}/>
+            )
+    }
+
+    handleEnter = (i) => {
+        const topSquareArray = this.state.topSquareArray;
+        if (i === 0) {
+            topSquareArray[0] = "square-top-center";
+            topSquareArray[1] = "square-top-sides";
+        } else if (i === 6) {
+            topSquareArray[6] = "square-top-center";
+            topSquareArray[5] = "square-top-sides";
+        } else {
+            topSquareArray[i-1] = "square-top-sides";
+            topSquareArray[i] = "square-top-center";
+            topSquareArray[i+1] = "square-top-sides"; 
+        }
+        this.setState({
+            topSquareArray: topSquareArray
+        })
+    }
+
     renderSquares = (i) => {
         return (
             <div className="board-row">
@@ -126,7 +157,10 @@ class ConnectHome extends React.Component{
                 <Square className = {this.state.squareArray[i][5]} onClick = {() => this.handleClick(5)}/>
                 <Square className = {this.state.squareArray[i][6]} onClick = {() => this.handleClick(6)}/>
             </div>
-        )}
+        )
+    }
+
+
 
     render () {
 
@@ -140,17 +174,28 @@ class ConnectHome extends React.Component{
                     <h2 className= "winner-header">Congratulations {this.state.gameWinner}!</h2>
                 }
                 <div className="main-board">
-                {this.renderSquares(0)}
-                {this.renderSquares(1)}
-                {this.renderSquares(2)}
-                {this.renderSquares(3)}
-                {this.renderSquares(4)}
-                {this.renderSquares(5)}
+                    <div className="board-row">
+                        {this.renderTopSquares(0)}
+                        {this.renderTopSquares(1)}
+                        {this.renderTopSquares(2)}
+                        {this.renderTopSquares(3)}
+                        {this.renderTopSquares(4)}
+                        {this.renderTopSquares(5)}
+                        {this.renderTopSquares(6)}
+                    </div>
+                    <div>
+                        {this.renderSquares(0)}
+                        {this.renderSquares(1)}
+                        {this.renderSquares(2)}
+                        {this.renderSquares(3)}
+                        {this.renderSquares(4)}
+                        {this.renderSquares(5)}
+                    </div>
                 </div>
                 <div className="lower-bar">
                     <p>Games won by blue: {this.state.gamesWonBlue}</p>
                     <p>Games won by red: {this.state.gamesWonRed}</p>
-                    <input type="submit" value="Start Again" onClick={() => this.startAgain()}></input>
+                    <input type="button" value="Start Again" onClick={() => this.startAgain()}></input>
                 </div>
             </div>
         )
