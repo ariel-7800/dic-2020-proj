@@ -8,7 +8,6 @@ class ConnectHome extends React.Component{
         super(props);
         this.state = {
             squareArray: [Array(7).fill("square"),Array(7).fill("square"),Array(7).fill("square"),Array(7).fill("square"),Array(7).fill("square"),Array(7).fill("square")],
-            topSquareArray: Array(7).fill("square-top-basic"),
             currentPlayer: "blue",
             gameWinner: false,
             gamesWonRed: 0,
@@ -83,7 +82,7 @@ class ConnectHome extends React.Component{
         }
 
         const squareArray = this.state.squareArray.slice();
-        if (squareArray[0][i] !== "square") {
+        if (squareArray[0][i] === "redSquare" || squareArray[0][i] === "blueSquare") {
             return;
         }
 
@@ -98,7 +97,7 @@ class ConnectHome extends React.Component{
 
         let z = true;
         for (let j = 0; j < 6; j++) {
-            if (squareArray[j][i] !== "square") {
+            if (squareArray[j][i] === "redSquare" || squareArray[j][i] === "blueSquare") {
                 z = false
                 squareArray[j-1][i] = color;
                 this.checkWinner(j-1,i);
@@ -116,10 +115,67 @@ class ConnectHome extends React.Component{
 
     }
 
-    handleLeave = () => {
+    handleLeave = (i) => {
+        if (this.state.gameWinner) {
+            return
+        }
+
+        const squareArray = this.state.squareArray.slice();
+        if (squareArray[0][i] === "redSquare" || squareArray[0][i] === "blueSquare") {
+            return;
+        }
+
+        let z = true;
+        for (let j = 0; j < 6; j++) {
+            if (squareArray[j][i] === "redSquare" || squareArray[j][i] === "blueSquare") {
+                z = false
+                squareArray[j-1][i] = "square";
+                break;
+            }
+        } 
+        if (z) {
+            squareArray[5][i] = "square";
+        }
+
         this.setState({
-            topSquareArray: Array(7).fill("square-top-basic")
-                })
+            squareArray: squareArray
+        })
+
+    }
+
+    handleEnter = (i) => {
+        if (this.state.gameWinner) {
+            return
+        }
+
+        const squareArray = this.state.squareArray.slice();
+        if (squareArray[0][i] === "redSquare" || squareArray[0][i] === "blueSquare") {
+            return;
+        }
+
+        let color;
+        if (this.state.currentPlayer === "blue") {
+            color = "blueSquareHover"
+        } else {
+            color = "redSquareHover" 
+        }
+
+        let z = true;
+        for (let j = 0; j < 6; j++) {
+            if (squareArray[j][i] === "redSquare" || squareArray[j][i] === "blueSquare") {
+                z = false
+                squareArray[j-1][i] = color;
+                break;
+            }
+        } 
+        if (z) {
+            squareArray[5][i] = color;
+        }
+
+        this.setState({
+            squareArray: squareArray
+        })
+
     }
 
     renderTopSquares = (i) => {
@@ -128,34 +184,16 @@ class ConnectHome extends React.Component{
             )
     }
 
-    handleEnter = (i) => {
-        const topSquareArray = this.state.topSquareArray;
-        if (i === 0) {
-            topSquareArray[0] = "square-top-center";
-            topSquareArray[1] = "square-top-sides";
-        } else if (i === 6) {
-            topSquareArray[6] = "square-top-center";
-            topSquareArray[5] = "square-top-sides";
-        } else {
-            topSquareArray[i-1] = "square-top-sides";
-            topSquareArray[i] = "square-top-center";
-            topSquareArray[i+1] = "square-top-sides"; 
-        }
-        this.setState({
-            topSquareArray: topSquareArray
-        })
-    }
-
     renderSquares = (i) => {
         return (
             <div className="board-row">
-                <Square className = {this.state.squareArray[i][0]} onClick = {() => this.handleClick(0)}/>
-                <Square className = {this.state.squareArray[i][1]} onClick = {() => this.handleClick(1)}/>
-                <Square className = {this.state.squareArray[i][2]} onClick = {() => this.handleClick(2)}/>
-                <Square className = {this.state.squareArray[i][3]} onClick = {() => this.handleClick(3)}/>
-                <Square className = {this.state.squareArray[i][4]} onClick = {() => this.handleClick(4)}/>
-                <Square className = {this.state.squareArray[i][5]} onClick = {() => this.handleClick(5)}/>
-                <Square className = {this.state.squareArray[i][6]} onClick = {() => this.handleClick(6)}/>
+                <Square className = {this.state.squareArray[i][0]} onClick = {() => this.handleClick(0)} onMouseEnter={() => this.handleEnter(0)} onMouseLeave={() => this.handleLeave(0)}/>
+                <Square className = {this.state.squareArray[i][1]} onClick = {() => this.handleClick(1)} onMouseEnter={() => this.handleEnter(1)} onMouseLeave={() => this.handleLeave(1)}/>
+                <Square className = {this.state.squareArray[i][2]} onClick = {() => this.handleClick(2)} onMouseEnter={() => this.handleEnter(2)} onMouseLeave={() => this.handleLeave(2)}/>
+                <Square className = {this.state.squareArray[i][3]} onClick = {() => this.handleClick(3)} onMouseEnter={() => this.handleEnter(3)} onMouseLeave={() => this.handleLeave(3)}/>
+                <Square className = {this.state.squareArray[i][4]} onClick = {() => this.handleClick(4)} onMouseEnter={() => this.handleEnter(4)} onMouseLeave={() => this.handleLeave(4)}/>
+                <Square className = {this.state.squareArray[i][5]} onClick = {() => this.handleClick(5)} onMouseEnter={() => this.handleEnter(5)} onMouseLeave={() => this.handleLeave(5)}/>
+                <Square className = {this.state.squareArray[i][6]} onClick = {() => this.handleClick(6)} onMouseEnter={() => this.handleEnter(6)} onMouseLeave={() => this.handleLeave(6)}/>
             </div>
         )
     }
@@ -174,23 +212,12 @@ class ConnectHome extends React.Component{
                     <h2 className= "winner-header">Congratulations {this.state.gameWinner}!</h2>
                 }
                 <div className="main-board">
-                    <div className="board-row">
-                        {this.renderTopSquares(0)}
-                        {this.renderTopSquares(1)}
-                        {this.renderTopSquares(2)}
-                        {this.renderTopSquares(3)}
-                        {this.renderTopSquares(4)}
-                        {this.renderTopSquares(5)}
-                        {this.renderTopSquares(6)}
-                    </div>
-                    <div>
-                        {this.renderSquares(0)}
-                        {this.renderSquares(1)}
-                        {this.renderSquares(2)}
-                        {this.renderSquares(3)}
-                        {this.renderSquares(4)}
-                        {this.renderSquares(5)}
-                    </div>
+                    {this.renderSquares(0)}
+                    {this.renderSquares(1)}
+                    {this.renderSquares(2)}
+                    {this.renderSquares(3)}
+                    {this.renderSquares(4)}
+                    {this.renderSquares(5)}
                 </div>
                 <div className="lower-bar">
                     <p>Games won by blue: {this.state.gamesWonBlue}</p>

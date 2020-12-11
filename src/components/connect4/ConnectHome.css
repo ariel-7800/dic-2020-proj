@@ -1,4 +1,4 @@
-.square, .blueSquare, .redSquare, .square-top-basic, .square-top-sides, .square-top-center {
+.square, .blueSquare, .redSquare, .redSquareHover, .blueSquareHover{
   background: #fff;
   border: 1px solid #999;
   float: left;
@@ -12,28 +12,22 @@
   border-radius: 80px 
 }
 
-.square-top-sides, .square-top-center, .square-top-basic {
-  background-color: #D3D3D3;
-  background-image: linear-gradient(#D3D3D3,#D3D3D3,#fff);
-  border-color: #D3D3D3;
-  opacity: 0.25;
-}
-
-.square-top-center {
-  opacity: 0.8;
-}
-
-.square-top-basic {
-  opacity: 0;
-}
-
-
 .blueSquare {
   background: blue;
 }
 
+.blueSquareHover {
+  background: blue;
+  opacity: 0.5;
+}
+
 .redSquare {
   background: red;
+}
+
+.redSquareHover {
+  background: red;
+  opacity: 0.5;
 }
 
 .board-row {
