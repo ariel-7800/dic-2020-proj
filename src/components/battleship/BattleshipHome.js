@@ -22,7 +22,7 @@ class BattleshipHome extends React.Component{
 
     startGame = (event) => {
         event.preventDefault();
-        if (this.state.p1Ships != 5 || this.state.p2Ships != 5) {
+        if (this.state.p1Ships !== 5 || this.state.p2Ships !== 5) {
             return;
         }
         this.setState({
@@ -131,9 +131,9 @@ class BattleshipHome extends React.Component{
     }
 
     determineWinner = () => {
-        if (this.state.p1Hit == 5) {
+        if (this.state.p1Hit === 5) {
             return "1";
-        } else if (this.state.p2Hit == 5) {
+        } else if (this.state.p2Hit === 5) {
             return "2";
         } else {
             return null;
