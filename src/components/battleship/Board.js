@@ -6,9 +6,9 @@ class Board extends React.Component{
 
         const squares = [];
         let count = 0;
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 7; i++) {
             let row = [];
-            for (let j = 0; j < 5; j++) {
+            for (let j = 0; j < 7; j++) {
                 row.push(this.props.value(count++));
             }
             squares.push(row);
@@ -35,6 +35,14 @@ class Board extends React.Component{
 
                 <div className="board-row">
                     { squares[4] }
+                </div>
+
+                <div className="board-row">
+                    { squares[5] }
+                </div>
+
+                <div className="board-row">
+                    { squares[6] }
                 </div>
             </div>
 
