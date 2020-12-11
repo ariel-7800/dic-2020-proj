@@ -54,6 +54,6 @@ class Home extends React.Component{
             
         )
     }
-} s
+}
 
 export default Home;
