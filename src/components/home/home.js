@@ -1,6 +1,7 @@
 import React from "react"
 import ConnectHome from "../connect4/ConnectHome";
 import BattleshipHome from "../battleship/BattleshipHome";
+import "./home.css"
 
 
 class Home extends React.Component{
@@ -26,6 +27,13 @@ class Home extends React.Component{
         });
     };
 
+    goHome = (event) => {
+        event.preventDefault();
+        this.setState({
+            currentGame: null
+        })
+    } 
+
     render () {
         return (
                 <div>
@@ -36,7 +44,10 @@ class Home extends React.Component{
                                 <input type="submit" value = "Battleship" onClick={this.launchBattleShip}/>
                             </div>
                         :
-                            this.state.currentGame === "Connect4" ? <ConnectHome/> : <BattleshipHome/>
+                            <div>
+                                {this.state.currentGame === "Connect4" ? <ConnectHome/> : <BattleshipHome/>}
+                                <input className="go-back" type="submit" value="Go to Home" onClick={this.goHome}/>
+                            </div>
 
                     }
                 </div>
