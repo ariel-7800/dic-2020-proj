@@ -1,64 +1,65 @@
-.square, .blueSquare, .redSquare{
-    background: #fff;
-    border: 1px solid #999;
-    float: left;
-    font-size: 24px;
-    font-weight: bold;
-    line-height: 34px;
-    height: 80px;
-    padding: 0;
-    text-align: center;
-    width: 80px; 
-    border-radius: 80px }
-
-  .blueSquare {
-    background: blue;
-  }
-
-    .redSquare {
-      background: red;
+.square, .blueSquare, .redSquare {
+  background: #fff;
+  border: 1px solid #999;
+  float: left;
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 34px;
+  height: 80px;
+  padding: 0;
+  text-align: center;
+  width: 80px; 
+  border-radius: 80px 
 }
 
-  .board-row {
-    clear: both;
-    content: "";
-    display: table;
-    margin-left: 10%;
-  }
+.blueSquare {
+  background: blue;
+}
 
-  .main-game {
-    background-color: lightgray;
-  }
+.redSquare {
+  background: red;
+}
 
-  .main-header {
-    text-align: center;
-    color: black;
+.board-row {
+  clear: both;
+  content: "";
+  display: table;
+  margin-left: 10%;
+}
 
-  }
+.main-game {
+  background-color: lightgray;
+}
 
-  .turn-header {
-    text-align: center;
-    font-size: 20px;
-    margin-bottom: 25px;
-  }
+.main-header {
+  text-align: center;
+  color: black;
 
-  .winner-header {
-    text-align: center;
-    color: #999900;
-    font-weight: 900;
-  }
-  
-  .main-board {
-    margin: auto;
-    width: 700px;
-  }
+}
 
-  .lower-bar {
-    margin: auto;
-    width: 475px;
-  }
+.turn-header {
+  text-align: center;
+  font-size: 20px;
+  margin-bottom: 25px;
+}
 
-  .lower-bar p, .lower-bar input{
-    display: inline-block;
-    margin: 10px;
-  }
+.winner-header {
+  text-align: center;
+  color: #999900;
+  font-weight: 900;
+}
+
+.main-board {
+  margin: auto;
+  width: 700px;
+}
+
+.lower-bar {
+  margin: auto;
+  width: 475px;
+}
+
+.lower-bar p, .lower-bar input{
+  display: inline-block;
+  margin: 10px;
+}

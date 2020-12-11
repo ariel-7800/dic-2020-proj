@@ -50,29 +50,33 @@ class BattleshipHome extends React.Component{
 
     handleP1ClickInitial = (i) => {
         const p1LocationArray = this.state.p1LocationArray.slice();
+        const selectedSquare = p1LocationArray[i];
 
-        if (this.state.p1Ships >= 5 || p1LocationArray[i]) {
+        if (this.state.p1Ships >= 5 && (selectedSquare === null)) {
             return;
         }
-        
-        p1LocationArray[i] = "X";
+
+        p1LocationArray[i] = selectedSquare === null ? "X" : null;
+        const shipsCount = selectedSquare === null ? 1 : -1;
         this.setState({
             p1LocationArray: p1LocationArray,
-            p1Ships: this.state.p1Ships + 1
+            p1Ships: this.state.p1Ships + shipsCount
         })
     }
     
     handleP2ClickInitial = (i) => {
         const p2LocationArray = this.state.p2LocationArray.slice();
+        const selectedSquare = p2LocationArray[i];
 
-        if (this.state.p2Ships >= 5 || p2LocationArray[i]) {
+        if (this.state.p2Ships >= 5 && (selectedSquare === null)) {
             return;
         }
         
-        p2LocationArray[i] = "X";
+        p2LocationArray[i] = selectedSquare === null ? "X" : null;
+        const shipsCount = selectedSquare === null ? 1 : -1;
         this.setState({
             p2LocationArray: p2LocationArray,
-            p2Ships: this.state.p2Ships + 1
+            p2Ships: this.state.p2Ships + shipsCount
         })
     }
 

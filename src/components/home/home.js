@@ -45,7 +45,7 @@ class Home extends React.Component{
                             </div>
                         :
                             <div>
-                                {this.state.currentGame === "Connect4" ? <ConnectHome/> : <BattleshipHome/>}
+                                { this.state.currentGame === "Connect4" ? <ConnectHome/> : <BattleshipHome/> }
                                 <input className="go-back" type="submit" value="Go to Home" onClick={this.goHome}/>
                             </div>
 
@@ -54,6 +54,6 @@ class Home extends React.Component{
             
         )
     }
-}
+} s
 
 export default Home;
