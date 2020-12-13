@@ -27,17 +27,41 @@ class BattleshipHome extends React.Component{
             p1AttackArray: Array(49).fill(null),
             p2AttackArray: Array(49).fill(null),
             p1Hit: 0,
-            p2Hit: 0
+            p2Hit: 0,
+            p1ShipsHit: Array(5).fill(null),
+            p2ShipsHit: Array(5).fill(null),
+            p1InGameHit: false,
+            p2InGameHit: false
         };
     }
 
     startGame = (event) => {
         event.preventDefault();
-        if (this.state.p1Ships !== 17 || this.state.p2Ships !== 17) {
+        if (this.state.p2Ships !== 17) {
             return;
         }
         this.setState({
-            gameStarted: true
+            gameStarted: true,
+            p1IsNext: !this.state.p1IsNext
+        });
+    }
+
+    finishP1SetUp = (event) => {
+        event.preventDefault();
+        if (this.state.p1Ships !== 17) {
+            return;
+        }
+        this.setState({
+            p1IsNext: !this.state.p1IsNext
+        });
+    }
+
+    continue = (event) => {
+        event.preventDefault();
+        this.setState({
+            p1IsNext: !this.state.p1IsNext,
+            p1InGameHit: false,
+            p2InGameHit: false
         });
     }
     
@@ -93,18 +117,20 @@ class BattleshipHome extends React.Component{
         }
 
         //early outs
+        //if all ships already added and trying to add new ship
         if (this.state.p1Ships >= 17 && (selectedSquare === null)) {
             return;
         }
+        //if hasn't selected ship type to add
         if (p1SelectedShip === null) {
             return
         }
+        //if adding an already added ship type
         const range = p1ShipLocations[locationLookup];
-        if (range && (i < range[0] || i > range[1])) {
+        if (range && (i < range[0] || i > range[1]) && (selectedSquare === null)) {
             return;
         }
         
-
         //if adding ship
         if (selectedSquare === null) {
             const maxLength = 7 - ((i) % 7);
@@ -125,7 +151,6 @@ class BattleshipHome extends React.Component{
                 p1Ships: this.state.p1Ships + iters,
                 p1ShipLocations: p1ShipLocations
             })
-
 
         //if removing ship
         } else {
@@ -189,18 +214,20 @@ class BattleshipHome extends React.Component{
         }
 
         //early outs
+        //if all ships already added and trying to add new ship
         if (this.state.p2Ships >= 17 && (selectedSquare === null)) {
             return;
         }
+        //if hasn't selected ship type to add
         if (p2SelectedShip === null) {
             return
         }
+        //if adding an already added ship type
         const range = p2ShipLocations[locationLookup];
-        if (range && (i < range[0] || i > range[1])) {
+        if (range && (i < range[0] || i > range[1]) && (selectedSquare === null)) {
             return;
         }
         
-
         //if adding ship
         if (selectedSquare === null) {
             const maxLength = 7 - ((i) % 7);
@@ -221,7 +248,6 @@ class BattleshipHome extends React.Component{
                 p2Ships: this.state.p2Ships + iters,
                 p2ShipLocations: p2ShipLocations
             })
-
 
         //if removing ship
         } else {
@@ -283,6 +309,10 @@ class BattleshipHome extends React.Component{
 
     handleP1ClickInGame = (i) => {
 
+        if (this.state.p1InGameHit) {
+            return;
+        }
+
         const p1AttackArray = this.state.p1AttackArray.slice();
 
         if (!this.state.p1IsNext || p1AttackArray[i] || this.determineWinner()) {
@@ -292,15 +322,45 @@ class BattleshipHome extends React.Component{
         const hitSquare = this.state.p2LocationArray[i];
         p1AttackArray[i] = hitSquare === null ? "O" : "X";
         const hitCount = hitSquare === null ? 0 : 1;
+
+        let p1ShipsHit = this.state.p1ShipsHit.slice();
+        if (hitSquare === "X") {
+            let init;
+            let end;
+            let index = 0;
+            for (let val of this.state.p2ShipLocations) {
+                if (val && (i >= val[0] && i <= val[1])) {
+                    init = val[0];
+                    end = val[1];
+                    break;
+                }
+                index++;
+            }
+            let found = true;
+            for (let j = init; j <= end; j++) {
+                if (p1AttackArray[j] !== "X") {
+                    found = false;
+                    break;
+                }
+            }
+            if (found) {
+                p1ShipsHit[index] = 1;
+            }
+        }
+
         this.setState({
             p1AttackArray: p1AttackArray,
-            p1IsNext: !this.state.p1IsNext,
-            p1Hit: this.state.p1Hit + hitCount
+            p1InGameHit: true,
+            p1Hit: this.state.p1Hit + hitCount,
+            p1ShipsHit: p1ShipsHit
         })
     }
 
     handleP2ClickInGame = (i) => {
 
+        if (this.state.p2InGameHit) {
+            return;
+        }
         const p2AttackArray = this.state.p2AttackArray.slice();
 
         if (this.state.p1IsNext || p2AttackArray[i] || this.determineWinner()) {
@@ -310,10 +370,37 @@ class BattleshipHome extends React.Component{
         const hitSquare = this.state.p1LocationArray[i];
         p2AttackArray[i] = hitSquare === null ? "O" : "X";
         const hitCount = hitSquare === null ? 0 : 1;
+
+        let p2ShipsHit = this.state.p2ShipsHit.slice();
+        if (hitSquare === "X") {
+            let init;
+            let end;
+            let index = 0;
+            for (let val of this.state.p1ShipLocations) {
+                if (val && (i >= val[0] && i <= val[1])) {
+                    init = val[0];
+                    end = val[1];
+                    break;
+                }
+                index++;
+            }
+            let found = true;
+            for (let j = init; j <= end; j++) {
+                if (p2AttackArray[j] !== "X") {
+                    found = false;
+                    break;
+                }
+            }
+            if (found) {
+                p2ShipsHit[index] = 1;
+            }
+        }
+
         this.setState({
             p2AttackArray: p2AttackArray,
-            p1IsNext: !this.state.p1IsNext,
-            p2Hit: this.state.p2Hit + hitCount
+            p2InGameHit: true,
+            p2Hit: this.state.p2Hit + hitCount,
+            p2ShipsHit: p2ShipsHit
         })
     }
 
@@ -336,53 +423,106 @@ class BattleshipHome extends React.Component{
         if (winner) {
             status = "Player " + (winner) + " Wins!!";
         } else {
-            status =  "Next Player: " + ( this.state.p1IsNext ? "Player 1" : "Player 2" );
+            status = this.state.p1IsNext ? "Player 1" : "Player 2";
         }
+
+        let p1HitStatus = Array(5).fill(null);
+        if (this.state.p1ShipsHit[0] === 1) {
+            p1HitStatus[0] =  <img src={ship2} alt="ship2" />
+        }
+        if (this.state.p1ShipsHit[1] === 1) {
+            p1HitStatus[1] =  <img src={ship3a} alt="ship3a" />
+        }
+        if (this.state.p1ShipsHit[2] === 1) {
+            p1HitStatus[2] =  <img src={ship3b} alt="ship3b" />
+        }
+        if (this.state.p1ShipsHit[3] === 1) {
+            p1HitStatus[3] =  <img src={ship4} alt="ship4" />
+        }
+        if (this.state.p1ShipsHit[4] === 1) {
+            p1HitStatus[4] =  <img src={ship5} alt="ship5" />
+        }
+
+        let p2HitStatus = Array(5).fill(null);
+        if (this.state.p2ShipsHit[0] === 1) {
+            p2HitStatus[0] =  <img src={ship2} alt="ship2" />
+        }
+        if (this.state.p2ShipsHit[1] === 1) {
+            p2HitStatus[1] =  <img src={ship3a} alt="ship3a" />
+        }
+        if (this.state.p2ShipsHit[2] === 1) {
+            p2HitStatus[2] =  <img src={ship3b} alt="ship3b" />
+        }
+        if (this.state.p2ShipsHit[3] === 1) {
+            p2HitStatus[3] =  <img src={ship4} alt="ship4" />
+        }
+        if (this.state.p2ShipsHit[4] === 1) {
+            p2HitStatus[4] =  <img src={ship5} alt="ship5" />
+        }
+
+        let p1SetUp = this.state.p1IsNext ?
+            <div>
+                <h3>Player 1</h3>
+                <p>Please select ship locations, then click Continue.</p>
+                <Board value={ this.renderP1SquaresInitial } />
+                <img src={ship2} alt="ship2" onClick = {() => this.handleP1Selected("ship2")} className={`${this.state.p1SelectedShip === "ship2" ? "withBorder" : "noBorder"} ${this.state.p1ShipLocations[0] ? "selected" : ""}`} />
+                <img src={ship3a} alt="ship3a" onClick = {() => this.handleP1Selected("ship3a")} className={`${this.state.p1SelectedShip === "ship3a" ? "withBorder" : "noBorder"} ${this.state.p1ShipLocations[1] ? "selected" : ""}`} />
+                <img src={ship3b} alt="ship3b" onClick = {() => this.handleP1Selected("ship3b")} className={`${this.state.p1SelectedShip === "ship3b" ? "withBorder" : "noBorder"} ${this.state.p1ShipLocations[2] ? "selected" : ""}`} />
+                <img src={ship4} alt="ship4" onClick = {() => this.handleP1Selected("ship4")} className={`${this.state.p1SelectedShip === "ship4" ? "withBorder" : "noBorder"} ${this.state.p1ShipLocations[3] ? "selected" : ""}`} />
+                <img src={ship5} alt="ship5" onClick = {() => this.handleP1Selected("ship5")} className={`${this.state.p1SelectedShip === "ship5" ? "withBorder" : "noBorder"} ${this.state.p1ShipLocations[4] ? "selected" : ""}`} />
+                <input type="submit" onClick={ this.finishP1SetUp } value="Continue"></input>
+            </div>
+            :
+            null;
+        
+        let p2SetUp = !this.state.p1IsNext ?
+            <div>
+                <h3>Player 2</h3>
+                <p>Please select ship locations, then click Start Game.</p>
+                <Board value={ this.renderP2SquaresInitial } />
+                <img src={ship2} alt="ship2" onClick = {() => this.handleP2Selected("ship2")} className={`${this.state.p2SelectedShip === "ship2" ? "withBorder" : "noBorder"} ${this.state.p2ShipLocations[0] ? "selected" : ""}`} />
+                <img src={ship3a} alt="ship3a" onClick = {() => this.handleP2Selected("ship3a")} className={`${this.state.p2SelectedShip === "ship3a" ? "withBorder" : "noBorder"} ${this.state.p2ShipLocations[1] ? "selected" : ""}`} />
+                <img src={ship3b} alt="ship3b" onClick = {() => this.handleP2Selected("ship3b")} className={`${this.state.p2SelectedShip === "ship3b" ? "withBorder" : "noBorder"} ${this.state.p2ShipLocations[2] ? "selected" : ""}`} />
+                <img src={ship4} alt="ship4" onClick = {() => this.handleP2Selected("ship4")} className={`${this.state.p2SelectedShip === "ship4" ? "withBorder" : "noBorder"} ${this.state.p2ShipLocations[3] ? "selected" : ""}`} />
+                <img src={ship5} alt="ship5" onClick = {() => this.handleP2Selected("ship5")} className={`${this.state.p2SelectedShip === "ship5" ? "withBorder" : "noBorder"} ${this.state.p2ShipLocations[4] ? "selected" : ""}`} />
+                <input type="submit" className="startGame" onClick={ this.startGame } value="Start Game"></input>
+            </div>
+            :
+            null;
+        
+        let p1InGame = this.state.p1IsNext ?
+            <div>
+                <Board value={ this.renderP1SquaresInGame } />
+                { p1HitStatus }
+                <input type="submit" onClick={ this.continue } value="Continue"></input>
+            </div>
+            :
+            null;
+
+        let p2InGame = !this.state.p1IsNext ?
+            <div>
+                <Board value={ this.renderP2SquaresInGame } />
+                { p2HitStatus }
+                <input type="submit" onClick={ this.continue } value="Continue"></input>
+            </div>
+            :
+            null;
+        
 
         return (
             <div>
                 {
                     this.state.gameStarted ?
                         <div>
-                            <h3>{ status }</h3>
-                            <h3>Player 1</h3>
-                            <div>
-                                <Board value={ this.renderP1SquaresInGame } />
-                            </div>
-
-                            <h3>Player 2</h3>
-                            <div>
-                                <Board value={ this.renderP2SquaresInGame } />
-                            </div>
+                            <h1>{ status }</h1>
+                            <div> { p1InGame }  </div>
+                            <div> { p2InGame }  </div>
                         </div>
                     :
                         <div>
-                            <header><h1>Welcome to Battleship!</h1></header>
-                            
-                            <h3>Player 1</h3>
-                            <p>Please select ship locations</p>
-                            <div>
-                                <Board value={ this.renderP1SquaresInitial } />
-                                <img src={ship2} alt="ship2" onClick = {() => this.handleP1Selected("ship2")} className={this.state.p1SelectedShip === "ship2" ? "withBorder" : "noBorder"} />
-                                <img src={ship3a} alt="ship3a" onClick = {() => this.handleP1Selected("ship3a")} className={this.state.p1SelectedShip === "ship3a" ? "withBorder" : "noBorder"} />
-                                <img src={ship3b} alt="ship3b" onClick = {() => this.handleP1Selected("ship3b")} className={this.state.p1SelectedShip === "ship3b" ? "withBorder" : "noBorder"} />
-                                <img src={ship4} alt="ship4" onClick = {() => this.handleP1Selected("ship4")} className={this.state.p1SelectedShip === "ship4" ? "withBorder" : "noBorder"} />
-                                <img src={ship5} alt="ship5" onClick = {() => this.handleP1Selected("ship5")} className={this.state.p1SelectedShip === "ship5" ? "withBorder" : "noBorder"} />
-                            </div>
-
-                            <h3>Player 2</h3>
-                            <p>Please select ship locations, then click Start Game</p>
-                            <div>
-                                <Board value={ this.renderP2SquaresInitial } />
-                                <img src={ship2} alt="ship2" onClick = {() => this.handleP2Selected("ship2")} className={this.state.p2SelectedShip === "ship2" ? "withBorder" : "noBorder"} />
-                                <img src={ship3a} alt="ship3a" onClick = {() => this.handleP2Selected("ship3a")} className={this.state.p2SelectedShip === "ship3a" ? "withBorder" : "noBorder"} />
-                                <img src={ship3b} alt="ship3b" onClick = {() => this.handleP2Selected("ship3b")} className={this.state.p2SelectedShip === "ship3b" ? "withBorder" : "noBorder"} />
-                                <img src={ship4} alt="ship4" onClick = {() => this.handleP2Selected("ship4")} className={this.state.p2SelectedShip === "ship4" ? "withBorder" : "noBorder"} />
-                                <img src={ship5} alt="ship5" onClick = {() => this.handleP2Selected("ship5")} className={this.state.p2SelectedShip === "ship5" ? "withBorder" : "noBorder"} />
-                            </div>
-                            
-                            <input type="submit" className="startGame" onClick={ this.startGame } value="Start Game"></input>
-                            
+                            <h1>Welcome to Battleship!</h1>
+                            <div> { p1SetUp } </div>
+                            <div> { p2SetUp } </div>
                         </div>
                 }
             </div>
