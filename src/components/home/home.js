@@ -36,12 +36,14 @@ class Home extends React.Component{
 
     render () {
         return (
-                <div>
+                <div className="home-container">
+                    <div className="home-text-container">
                     {
                         this.state.currentGame === null ? 
                             <div>
-                                <input type="submit" value="Connect4" onClick={this.launchConnect4}/>
-                                <input type="submit" value = "Battleship" onClick={this.launchBattleShip}/>
+                                <h1>Welcome to David and Ariel's Game Center!</h1>
+                                <input type="submit" className="button" value="Connect4" onClick={this.launchConnect4}/>
+                                <input type="submit" className="button" value = "Battleship" onClick={this.launchBattleShip}/>
                             </div>
                         :
                             <div>
@@ -50,6 +52,8 @@ class Home extends React.Component{
                             </div>
 
                     }
+                    </div>
+                    <div class="home-background-shader"></div>
                 </div>
             
         )
