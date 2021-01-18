@@ -25,9 +25,15 @@ class Checkers extends React.Component {
         }
 
         this.state = {
-            boardArray
+            boardArray,
+            currentTurn: null,
+            selected: null,
+            redTokens: 12,
+            blueTokens: 12
         }
     }
+
+
 
     createBoardRow (i) {
         let color1 = "gray";
